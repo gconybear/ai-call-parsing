@@ -2,3 +2,4 @@ openai
 pandas==1.5 
 streamlit==1.23.0
 pydub
+python-dotenv
