@@ -20,4 +20,6 @@ Your output should be a JSON object, nothing else, no words before or after. You
 Please produce a JSON response based on the following call transcript. 
 """  
 
-whisper_prompt = "This is a call between a customer and a customer service agent for a self-storage company called Red Dot Storage"
+whisper_prompt = "This is a call between a customer and a customer service agent for a self-storage company called Red Dot Storage" 
+
+# insert token when unsure

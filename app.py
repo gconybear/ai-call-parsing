@@ -27,11 +27,27 @@ def convert_to_wav(file):
     audio = AudioSegment.from_mp3(file)
     # Save as wav
     audio.export(tmp_wav.name, format="wav")
-    return tmp_wav.name 
+    return tmp_wav.name  
 
-st.set_page_config(layout="wide") 
-st.subheader("AI Call Parsing")
-blank() 
+
+st.set_page_config(layout="wide")  
+
+password = st.sidebar.text_input("Password")  
+if password.lower().strip() == st.secrets['PASSWORD']: 
+    valid_user = True 
+else: 
+    valid_user = False
+
+
+st.subheader("AI Call Parsing") 
+if valid_user: 
+    st.success("password accepted") 
+else: 
+    st.warning("invalid password") 
+
+blank()  
+
+
 
 with st.form(key='f'):   
 
@@ -46,40 +62,43 @@ with st.form(key='f'):
 
     go = st.form_submit_button("Go") 
 
-if go:  
-    if upload_type == 'File Upload': 
-        upload = audio_upload
+if go:   
+    if valid_user:
+        if upload_type == 'File Upload': 
+            upload = audio_upload
 
-        ftype = check_file_type(upload) 
-        st.write(f"File type: **{ftype}**")  
-        st.audio(upload)
+            ftype = check_file_type(upload) 
+            st.write(f"File type: **{ftype}**")  
+            st.audio(upload)
 
-        # Convert to wav
-        if ftype == 'audio/mpeg':
-            with st.spinner("Converting to wav"):
-                wav_file = convert_to_wav(upload) 
-                st.success("converted to .wav")
+            # Convert to wav
+            if ftype == 'audio/mpeg':
+                with st.spinner("Converting to wav"):
+                    wav_file = convert_to_wav(upload) 
+                    st.success("converted to .wav")
 
-            with st.spinner("Transcribing"): 
-                trans = whisper_transcribe(wav_file)   
+                with st.spinner("Transcribing"): 
+                    trans = whisper_transcribe(wav_file)   
+            else:  
+                with st.spinner("Transcribing"): 
+                    trans = whisper_transcribe(upload) 
         else:  
-            with st.spinner("Transcribing"): 
-                trans = whisper_transcribe(upload) 
-    else:  
-        upload = text_upload 
+            upload = text_upload 
 
-        trans = {'text': upload} 
+            trans = {'text': upload} 
 
-    with st.expander("Transcription"): 
-        trans = trans.get('text', '')
-        st.write(trans.replace("$", "\\$")) 
+        with st.expander("Transcription"): 
+            trans = trans.get('text', '')
+            st.write(trans.replace("$", "\\$")) 
 
-    with st.spinner("Pulling Data"): 
-        bot = gpt.ai(None, system_prompt=p) 
-        res = bot.answer(trans)  
-        try:
-            res = ast.literal_eval(res)  
-            st.json(res)
-        except: 
-            st.write(res) 
+        with st.spinner("Pulling Data"): 
+            bot = gpt.ai(None, system_prompt=p) 
+            res = bot.answer(trans)  
+            try:
+                res = ast.literal_eval(res)  
+                st.json(res)
+            except: 
+                st.write(res)  
+    else: 
+        st.warning("Please input valid passowrd in the sidebar")
 
