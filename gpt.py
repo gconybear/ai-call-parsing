@@ -53,7 +53,7 @@ class ai:
     def construct_prompt(self, head): 
         return head 
 
-    def answer(self, Q, preprompt='', history=[], model='gpt-3.5-turbo-0613'):   
+    def answer(self, Q, preprompt='', history=[], model='gpt-3.5-turbo-0613', temperature=0.5):   
 
         full_hist = self.sys_mssg + history + [{"role": "user", "content": Q}]
 
@@ -61,7 +61,8 @@ class ai:
 
         response = openai.ChatCompletion.create(
                     model=model, 
-                    messages=full_hist
+                    messages=full_hist, 
+                    temperature=temperature,
                     )  
         
         self.chat_log = full_hist 

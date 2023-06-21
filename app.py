@@ -1,7 +1,6 @@
 import streamlit as st 
 import mimetypes   
 import openai 
-from pydub import AudioSegment
 import tempfile 
 import ast
 
@@ -58,8 +57,17 @@ with st.form(key='f'):
     with st.expander("Transcription"): 
         text_upload = st.text_area("Paste transcription here") 
 
-    p = st.text_area("GPT Instructions", value=prompts.base)
+    p = st.text_area("GPT Instructions", value=prompts.base) 
 
+    temperature = st.slider("Temperature", 
+                            help="Higher temperature means more random/creative output. Lower temperature means more predictable/stable output.",
+                            min_value=0.0, 
+                            max_value=1.0, 
+                            value=0.5, 
+                            step=0.01, 
+                            key='temp')  
+    
+    blank()
     go = st.form_submit_button("Go") 
 
 if go:   
@@ -93,7 +101,7 @@ if go:
 
         with st.spinner("Pulling Data"): 
             bot = gpt.ai(None, system_prompt=p) 
-            res = bot.answer(trans)  
+            res = bot.answer(trans, temperature=temperature)  
             try:
                 res = ast.literal_eval(res)  
                 st.json(res)
