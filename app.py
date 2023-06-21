@@ -2,7 +2,8 @@ import streamlit as st
 import mimetypes   
 import openai 
 import tempfile 
-import ast
+import ast 
+from pydub import AudioSegment
 
 import prompts  
 import gpt
